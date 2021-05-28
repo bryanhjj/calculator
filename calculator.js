@@ -34,3 +34,16 @@ function operate(opt, num1, num2) {
 };
 
 
+// function that populate the display when number buttons are pressed (will populate in the mini-display)
+function populateMiniDisplay(input) {
+    let miniDisplay = document.querySelector("#mini-display");
+    let inputValue = input;
+    miniDisplay.textContent += input;
+};
+
+const buttons = document.querySelectorAll(".calculator-button");
+buttons.forEach((button) => {
+    button.addEventListener("click", () => {
+        populateMiniDisplay(button.value)
+    });
+});
