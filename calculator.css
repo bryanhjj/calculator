@@ -1,0 +1,11 @@
+#display {
+    height: 50px;
+    width: 300px;
+    background: lightgray;
+}
+
+#mini-display {
+    height: 20px;
+    width: 300px;
+    background: lightgray;
+}
