@@ -1,6 +1,3 @@
-let inputValue = [];
-let inputOperator;
-
 // basic functions for the calculator
 function add(a, b) {
     return a + b;
@@ -48,7 +45,6 @@ function populateMiniDisplay(input) {
 const buttons = document.querySelectorAll(".calculator-button");
 buttons.forEach((button) => {
     button.addEventListener("click", () => {
-        inputValue.push(button.value);
         populateMiniDisplay(button.value);
     });
 });
@@ -67,10 +63,29 @@ function populateDisplay(result) {
     display.textContent += result;
 };
 
+let listOfOperators = ["+", "-", "*", "/"];
+function operatorSearch(arr) {
+    for (let i = 0; i < listOfOperators.length; i++) {
+        for (let b = 0; b < arr.length; b++) {
+            if (arr[b] == listOfOperators[i]) {
+                return b;
+            };
+        };
+    };
+};
+
+// goes through the user input (in #mini-display) and enters the data into the appropriate functions
+function processUserInput() {
+    let miniDisplay = document.querySelector("#mini-display");
+    let userInput = Array.from(miniDisplay.textContent);
+    let operatorIndex = operatorSearch(userInput);
+    let leftOperandIndex = operatorIndex - 1;
+    let rightOperandIndex = operatorIndex + 1;
+    return operate(userInput[operatorIndex], userInput[leftOperandIndex], userInput[rightOperandIndex]);
+};
+
 let equalButton = document.querySelector("#equal");
 equalButton.addEventListener("click", () => {
-    let res = operate(inputOperator, inputValue[0], inputValue[1]);
-    inputValue.splice(0, 2);
-    inputOperator = "";
-    return populateDisplay(res);
+    let result = processUserInput();
+    populateDisplay(result);
 });
