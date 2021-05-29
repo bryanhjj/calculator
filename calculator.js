@@ -74,8 +74,7 @@ function operatorSearch(arr) {
     };
 };
 
-// goes through the user input (in #mini-display) and enters the data into the appropriate functions
-function processUserInput() {
+function processUserInput() { // goes through user input(in #mini-display) and enters the data into the appropriate functions
     let miniDisplay = document.querySelector("#mini-display");
     let userInput = Array.from(miniDisplay.textContent);
     let operatorIndex = operatorSearch(userInput);
