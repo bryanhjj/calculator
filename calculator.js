@@ -1,3 +1,7 @@
+let listOfOperators = ["+", "-", "*", "/"];
+// not an elegant solution, will revisit when I have a better idea.
+let listOfNumbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]; 
+
 // basic functions for the calculator
 function add(a, b) {
     return a + b;
@@ -56,7 +60,6 @@ function populateDisplay(result) {
     display.textContent += result;
 };
 
-let listOfOperators = ["+", "-", "*", "/"];
 function operatorSearch(arr) {
     for (let i = 0; i < listOfOperators.length; i++) {
         for (let b = 0; b < arr.length; b++) {
@@ -66,6 +69,42 @@ function operatorSearch(arr) {
         };
     };
 };
+
+
+// to deal with inputs with more than 2 digits 
+let multiNumA;
+let multiNumB;
+function digitAfter(arr, operandIndex, tempVal = 0) {
+    let temp;
+    if (tempVal == 0) {
+        temp = [arr[operandIndex]];
+    } else {
+        temp = [tempVal];
+    }
+    if (listOfNumbers.includes(arr[operandIndex + 1]) == false) {
+        return multiNumA;
+    } else {
+        temp.push(arr[operandIndex + 1]);
+        multiNumA = temp.join("");
+        digitAfter(arr, operandIndex + 1, multiNumA)
+    }
+}
+
+function digitBefore(arr, operandIndex, tempVal = 0) {
+    let temp;
+    if (tempVal == 0) {
+        temp = [arr[operandIndex]];
+    } else {
+        temp = [tempVal];
+    }
+    if (listOfNumbers.includes(arr[operandIndex - 1]) == false) {
+        return multiNumB;
+    } else {
+        temp.unshift(arr[operandIndex - 1]);
+        multiNumB = temp.join("");
+        digitBefore(arr, operandIndex - 1, multiNumB);
+    }
+}
 
 function processUserInput() { // goes through user input(in #mini-display) and enters the data into the appropriate functions
     let miniDisplay = document.querySelector("#mini-display");
@@ -95,6 +134,16 @@ function processUserInput() { // goes through user input(in #mini-display) and e
         let rightOperandIndex = operatorIndex + 1;
 
         for (let i = 0; i < operatorCount; i++) {
+            if (listOfNumbers.includes(userInput[leftOperandIndex - 1])) {
+                digitBefore(userInput, leftOperandIndex);
+                userInput.splice(leftOperandIndex - multiNumB.length + 1, multiNumB.length, multiNumB);
+                multiNumB = 0;
+            } else if (listOfNumbers.includes(userInput[rightOperandIndex + 1])) {
+                digitAfter(userInput, rightOperandIndex);
+                userInput.splice(rightOperandIndex, multiNumA.length, multiNumA);
+                multiNumA = 0;
+            }
+
             result = operate(userInput[operatorIndex], userInput[leftOperandIndex], userInput[rightOperandIndex]);
             userInput.splice(leftOperandIndex, 3, result);
             if (userInput.includes("*")) {
@@ -111,6 +160,15 @@ function processUserInput() { // goes through user input(in #mini-display) and e
         operatorIndex = operatorSearch(userInput);
         let leftOperandIndex = operatorIndex - 1;
         let rightOperandIndex = operatorIndex + 1;
+        if (listOfNumbers.includes(userInput[leftOperandIndex - 1])) {
+            digitBefore(userInput, leftOperandIndex);
+            userInput.splice(leftOperandIndex - (multiNumB.length + 1), multiNumB.length, multiNumB);
+            multiNumB = 0;
+        } else if (listOfNumbers.includes(userInput[rightOperandIndex + 1])) {
+            digitAfter(userInput, rightOperandIndex);
+            userInput.splice(rightOperandIndex, multiNumA.length, multiNumA);
+            multiNumA = 0;
+        }
         result = operate(userInput[operatorIndex], userInput[leftOperandIndex], userInput[rightOperandIndex]);
         }
     return result;
