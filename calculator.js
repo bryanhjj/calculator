@@ -49,13 +49,6 @@ buttons.forEach((button) => {
     });
 });
 
-const operatorButtons = document.querySelectorAll("#operator");
-operatorButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-        inputOperator = button.value;
-    });
-})
-
 
 // show the results of the calculator on the main display (#display)
 function populateDisplay(result) {
@@ -77,10 +70,50 @@ function operatorSearch(arr) {
 function processUserInput() { // goes through user input(in #mini-display) and enters the data into the appropriate functions
     let miniDisplay = document.querySelector("#mini-display");
     let userInput = Array.from(miniDisplay.textContent);
-    let operatorIndex = operatorSearch(userInput);
-    let leftOperandIndex = operatorIndex - 1;
-    let rightOperandIndex = operatorIndex + 1;
-    return operate(userInput[operatorIndex], userInput[leftOperandIndex], userInput[rightOperandIndex]);
+    let operatorIndex = 0;
+    let operatorCount = 0;
+    let result = 0;
+
+    for (let i = 0; i < listOfOperators.length; i++) { // check if users input multiple operators
+        for (let b = 0; b < userInput.length; b++) {
+            if (userInput[b] == listOfOperators[i]) {
+                operatorCount ++;
+            };
+        };
+    };
+
+    if (operatorCount > 1) {
+        if (userInput.includes("*")) {
+            operatorIndex = userInput.indexOf("*");
+        } else if (userInput.includes("/")) {
+            operatorIndex = userInput.indexOf("/");
+        } else {
+            operatorIndex = operatorSearch(userInput);
+        }
+
+        let leftOperandIndex = operatorIndex - 1;
+        let rightOperandIndex = operatorIndex + 1;
+
+        for (let i = 0; i < operatorCount; i++) {
+            result = operate(userInput[operatorIndex], userInput[leftOperandIndex], userInput[rightOperandIndex]);
+            userInput.splice(leftOperandIndex, 3, result);
+            if (userInput.includes("*")) {
+                operatorIndex = userInput.indexOf("*");
+            } else if (userInput.includes("/")) {
+                operatorIndex = userInput.indexOf("/");
+            } else {
+                operatorIndex = operatorSearch(userInput);
+            }
+            leftOperandIndex = operatorIndex - 1;
+            rightOperandIndex = operatorIndex + 1;
+        }
+    } else {
+        operatorIndex = operatorSearch(userInput);
+        let leftOperandIndex = operatorIndex - 1;
+        let rightOperandIndex = operatorIndex + 1;
+        result = operate(userInput[operatorIndex], userInput[leftOperandIndex], userInput[rightOperandIndex]);
+        }
+    return result;
 };
 
 let equalButton = document.querySelector("#equal");
