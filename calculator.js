@@ -124,29 +124,80 @@ function operatorCounter(arr) {
 // goes through user input(in #mini-display) and enters the data into the appropriate functions
 function processUserInput() { 
     let userInput = Array.from(miniDisplay.textContent);
-    let operatorIndex = 0;
-    let result = 0;
+    let hasNumb = false;
+    let hasOperator = false;
 
-    let operatorCount = operatorCounter(userInput);
+    // in case users just input "=" before numbers and operators
+    for (let i = 0; i < userInput.length; i++) { 
+        for (let b = 0; b < listOfOperators.length; b++) {
+            if (userInput[i] == listOfOperators[b]) {
+                hasOperator = true;
+            };
+        };
+        for (let c = 0; c < listOfNumbers.length; c++) {
+            if (userInput[i] == listOfNumbers[c]) {
+                hasNumb = true;
+            };
+        };
+    };
+    if (hasOperator == false || hasNumb == false) {
+        return "Please enter a valid equation.";
 
-    // applying the rule of multiply and divide first before add and subtract
-    // hence the result may vary from step 6.1 in the instructions
-    if (operatorCount > 1) {
-        if (userInput.includes("*")) {
-            operatorIndex = userInput.indexOf("*");
-        } else if (userInput.includes("/")) {
-            operatorIndex = userInput.indexOf("/");
-        } else {
-            operatorIndex = operatorSearch(userInput);
-        }
+    } else {
+        let operatorIndex = 0;
+        let result = 0;
+        let operatorCount = operatorCounter(userInput);
 
-        let leftOperandIndex = operatorIndex - 1;
-        let rightOperandIndex = operatorIndex + 1;
+        // applying the rule of multiply and divide first before add and subtract
+        // hence the result may vary from step 6.1 in the instructions
+        if (operatorCount > 1) {
+            if (userInput.includes("*")) {
+                operatorIndex = userInput.indexOf("*");
+            } else if (userInput.includes("/")) {
+                operatorIndex = userInput.indexOf("/");
+            } else {
+                operatorIndex = operatorSearch(userInput);
+            }
 
-        for (let i = 0; i < operatorCount; i++) {
-            if (listOfNumbers.includes(userInput[leftOperandIndex - 1])) {
-                digitBefore(userInput, operatorIndex);
-                userInput.splice(operatorIndex - multiNumB.length, multiNumB.length, multiNumB);
+            let leftOperandIndex = operatorIndex - 1;
+            let rightOperandIndex = operatorIndex + 1;
+
+            for (let i = 0; i < operatorCount; i++) {
+                if (listOfNumbers.includes(userInput[leftOperandIndex - 1])) {
+                    digitBefore(userInput, operatorIndex);
+                    userInput.splice(operatorIndex - multiNumB.length, multiNumB.length, multiNumB);
+                    // the following is to update relevant index after splice as positions may have changed
+                    if (userInput.includes("*")) {
+                        operatorIndex = userInput.indexOf("*");
+                    } else if (userInput.includes("/")) {
+                        operatorIndex = userInput.indexOf("/");
+                    } else {
+                        operatorIndex = operatorSearch(userInput);
+                    }
+                    leftOperandIndex = operatorIndex - 1;
+                    rightOperandIndex = operatorIndex + 1;
+                    // resetting the this variable so it can be used again later on
+                    multiNumB = 0;
+                } 
+                if (listOfNumbers.includes(userInput[rightOperandIndex + 1])) {
+                    digitAfter(userInput, operatorIndex);
+                    userInput.splice(rightOperandIndex, multiNumA.length, multiNumA);
+                    // the following is to update relevant index after splice as positions may have changed
+                    if (userInput.includes("*")) {
+                        operatorIndex = userInput.indexOf("*");
+                    } else if (userInput.includes("/")) {
+                        operatorIndex = userInput.indexOf("/");
+                    } else {
+                        operatorIndex = operatorSearch(userInput);
+                    }
+                    leftOperandIndex = operatorIndex - 1;
+                    rightOperandIndex = operatorIndex + 1;
+                    // resetting the this variable so it can be used again later on
+                    multiNumA = 0;
+                }
+
+                result = operate(userInput[operatorIndex], userInput[leftOperandIndex], userInput[rightOperandIndex]);
+                userInput.splice(leftOperandIndex, 3, result);
                 // the following is to update relevant index after splice as positions may have changed
                 if (userInput.includes("*")) {
                     operatorIndex = userInput.indexOf("*");
@@ -155,6 +206,18 @@ function processUserInput() {
                 } else {
                     operatorIndex = operatorSearch(userInput);
                 }
+                leftOperandIndex = operatorIndex - 1;
+                rightOperandIndex = operatorIndex + 1;
+            }
+        } else {
+            operatorIndex = operatorSearch(userInput);
+            let leftOperandIndex = operatorIndex - 1;
+            let rightOperandIndex = operatorIndex + 1;
+            if (listOfNumbers.includes(userInput[leftOperandIndex - 1])) {
+                digitBefore(userInput, operatorIndex);
+                userInput.splice(operatorIndex - multiNumB.length, multiNumB.length, multiNumB);
+                // the following is to update relevant index after splice as positions may have changed
+                operatorIndex = operatorSearch(userInput);
                 leftOperandIndex = operatorIndex - 1;
                 rightOperandIndex = operatorIndex + 1;
                 // resetting the this variable so it can be used again later on
@@ -164,59 +227,16 @@ function processUserInput() {
                 digitAfter(userInput, operatorIndex);
                 userInput.splice(rightOperandIndex, multiNumA.length, multiNumA);
                 // the following is to update relevant index after splice as positions may have changed
-                if (userInput.includes("*")) {
-                    operatorIndex = userInput.indexOf("*");
-                } else if (userInput.includes("/")) {
-                    operatorIndex = userInput.indexOf("/");
-                } else {
-                    operatorIndex = operatorSearch(userInput);
-                }
+                operatorIndex = operatorSearch(userInput);
                 leftOperandIndex = operatorIndex - 1;
                 rightOperandIndex = operatorIndex + 1;
                 // resetting the this variable so it can be used again later on
                 multiNumA = 0;
             }
-
             result = operate(userInput[operatorIndex], userInput[leftOperandIndex], userInput[rightOperandIndex]);
-            userInput.splice(leftOperandIndex, 3, result);
-            // the following is to update relevant index after splice as positions may have changed
-            if (userInput.includes("*")) {
-                operatorIndex = userInput.indexOf("*");
-            } else if (userInput.includes("/")) {
-                operatorIndex = userInput.indexOf("/");
-            } else {
-                operatorIndex = operatorSearch(userInput);
-            }
-            leftOperandIndex = operatorIndex - 1;
-            rightOperandIndex = operatorIndex + 1;
-        }
-    } else {
-        operatorIndex = operatorSearch(userInput);
-        let leftOperandIndex = operatorIndex - 1;
-        let rightOperandIndex = operatorIndex + 1;
-        if (listOfNumbers.includes(userInput[leftOperandIndex - 1])) {
-            digitBefore(userInput, operatorIndex);
-            userInput.splice(operatorIndex - multiNumB.length, multiNumB.length, multiNumB);
-            // the following is to update relevant index after splice as positions may have changed
-            operatorIndex = operatorSearch(userInput);
-            leftOperandIndex = operatorIndex - 1;
-            rightOperandIndex = operatorIndex + 1;
-            // resetting the this variable so it can be used again later on
-            multiNumB = 0;
-        } 
-        if (listOfNumbers.includes(userInput[rightOperandIndex + 1])) {
-            digitAfter(userInput, operatorIndex);
-            userInput.splice(rightOperandIndex, multiNumA.length, multiNumA);
-            // the following is to update relevant index after splice as positions may have changed
-            operatorIndex = operatorSearch(userInput);
-            leftOperandIndex = operatorIndex - 1;
-            rightOperandIndex = operatorIndex + 1;
-            // resetting the this variable so it can be used again later on
-            multiNumA = 0;
-        }
-        result = operate(userInput[operatorIndex], userInput[leftOperandIndex], userInput[rightOperandIndex]);
         }
     return result;
+    }
 };
 
 // function for the clear button
@@ -241,5 +261,7 @@ clearButton.addEventListener("click", () => {
 let equalButton = document.querySelector("#equal");
 equalButton.addEventListener("click", () => {
     let result = processUserInput();
+    clearDisplay();
     populateDisplay(result);
+    clearMiniDisplay();
 });
