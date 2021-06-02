@@ -61,6 +61,7 @@ function populateDisplay(result) {
     display.textContent += result;
 };
 
+// searches for an operator in an array
 function operatorSearch(arr) {
     for (let i = 0; i < listOfOperators.length; i++) {
         for (let b = 0; b < arr.length; b++) {
@@ -217,6 +218,25 @@ function processUserInput() {
         }
     return result;
 };
+
+// function for the clear button
+function clearMiniDisplay() {
+    miniDisplay.textContent = "";
+    multiNumA = 0;
+    multiNumB = 0;
+};
+
+function clearDisplay() {
+    display.textContent = "";
+    multiNumA = 0;
+    multiNumB = 0;
+};
+
+let clearButton = document.querySelector("#clear");
+clearButton.addEventListener("click", () => {
+    clearMiniDisplay();
+    clearDisplay();
+});
 
 let equalButton = document.querySelector("#equal");
 equalButton.addEventListener("click", () => {
