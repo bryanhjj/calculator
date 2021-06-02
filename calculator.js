@@ -19,6 +19,9 @@ function multiply(a, b) {
 };
 
 function divide(a, b) {
+    if (b == 0) {
+        return "Did you really tried to divide by 0? Stop.";
+    }
     return a / b;
 };
 
@@ -262,6 +265,10 @@ let equalButton = document.querySelector("#equal");
 equalButton.addEventListener("click", () => {
     let result = processUserInput();
     clearDisplay();
-    populateDisplay(result);
+    if (typeof result == "number") {
+        populateDisplay(result.toFixed(2));
+    } else {
+        populateDisplay(result);
+    }
     clearMiniDisplay();
 });
