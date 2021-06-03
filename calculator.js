@@ -242,7 +242,7 @@ function processUserInput() {
     }
 };
 
-// function for the clear button
+// functions for the clear button
 function clearMiniDisplay() {
     miniDisplay.textContent = "";
     multiNumA = 0;
@@ -271,4 +271,16 @@ equalButton.addEventListener("click", () => {
         populateDisplay(result);
     }
     clearMiniDisplay();
+});
+
+// function for a backspace/delete button
+function removeLastInput() {
+    let inputToBeModified = Array.from(miniDisplay.textContent)
+    inputToBeModified.pop();
+    miniDisplay.textContent = inputToBeModified.join("");
+};
+
+let backspaceButton = document.querySelector("#backspace");
+backspaceButton.addEventListener("click", () => {
+    removeLastInput();
 });
