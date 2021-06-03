@@ -1,9 +1,10 @@
 let listOfOperators = ["+", "-", "*", "/"];
 let miniDisplay = document.querySelector("#mini-display");
 let display = document.querySelector("#display");
-let listOfNumbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
+let listOfNumbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "."];
 let multiNumA;
 let multiNumB;
+let decimalCount = 0;
 
 // basic functions for the calculator
 function add(a, b) {
@@ -247,12 +248,16 @@ function clearMiniDisplay() {
     miniDisplay.textContent = "";
     multiNumA = 0;
     multiNumB = 0;
+    decimalCount = 0;
+    deciButtonToggle();
 };
 
 function clearDisplay() {
     display.textContent = "";
     multiNumA = 0;
     multiNumB = 0;
+    decimalCount = 0;
+    deciButtonToggle();
 };
 
 let clearButton = document.querySelector("#clear");
@@ -276,11 +281,30 @@ equalButton.addEventListener("click", () => {
 // function for a backspace/delete button
 function removeLastInput() {
     let inputToBeModified = Array.from(miniDisplay.textContent)
-    inputToBeModified.pop();
+    let removedElement = inputToBeModified.pop();
+    if (removedElement == ".") {
+        decimalCount --;
+    }
     miniDisplay.textContent = inputToBeModified.join("");
 };
 
 let backspaceButton = document.querySelector("#backspace");
 backspaceButton.addEventListener("click", () => {
     removeLastInput();
+    deciButtonToggle();
 });
+
+// a decimal button that disables itself after 1 input (step 7)
+let decimalButton = document.querySelector("#deci");
+decimalButton.addEventListener("click", () => {
+    decimalCount ++;
+    deciButtonToggle();
+});
+
+function deciButtonToggle() {
+    if (decimalCount >= 1) {
+        document.getElementById("deci").disabled = true;
+    } else {
+        document.getElementById("deci").disabled = false;
+    }
+}
