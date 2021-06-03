@@ -306,5 +306,12 @@ function deciButtonToggle() {
         document.getElementById("deci").disabled = true;
     } else {
         document.getElementById("deci").disabled = false;
-    }
-}
+    };
+};
+
+// adding keyboard support (will just implement to the backspace key for now)
+document.addEventListener("keydown", (ev) => {
+    if (ev.key == "Backspace") {
+        backspaceButton.click();
+    };
+});
